@@ -414,6 +414,7 @@ public class YiXiaWaveLoadingView extends View {
     public void setShapeType(ShapeType shapeType) {
         //TODO reset width height
         mShapeType = shapeType.ordinal();
+        requestLayout();
         invalidate();
     }
 
