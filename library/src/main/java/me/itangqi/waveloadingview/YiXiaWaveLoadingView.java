@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -76,7 +77,6 @@ public class YiXiaWaveLoadingView extends View {
     // Object used to draw.
     // Shader containing repeated waves.
     private BitmapShader mWaveShader;
-    private Bitmap bitmapBuffer;
     // Shader matrix.
     private Matrix mShaderMatrix;
     // Paint to draw wave.
@@ -91,6 +91,10 @@ public class YiXiaWaveLoadingView extends View {
     private AnimatorSet mAnimatorSet;
 
     private Context mContext;
+
+    //add for draw
+    @NonNull
+    private RectF drawRectangleRect = new RectF();
 
     // Constructor & Init Method.
     public YiXiaWaveLoadingView(final Context context) {
@@ -213,24 +217,22 @@ public class YiXiaWaveLoadingView extends View {
                 // Draw rectangle
                 case 2:
                     if (borderWidth > 0) {
-                        RectF rect = new RectF(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f);
-                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
-                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            canvas.drawRoundRect(
-                                    borderWidth / 2f,
-                                    borderWidth / 2f,
-                                    getWidth() - borderWidth / 2f - 0.5f,
-                                    getHeight() - borderWidth / 2f - 0.5f,
-                                    mRoundRectangleXY, mRoundRectangleXY,
-                                    mBorderPaint);
-                        } else {
-                            canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mBorderPaint);
-                        }
+                        drawRectangleRect.left = borderWidth / 2f;
+                        drawRectangleRect.top = borderWidth / 2f;
+                        drawRectangleRect.right = getWidth() - borderWidth / 2f - 0.5f;
+                        drawRectangleRect.bottom = getHeight() - borderWidth / 2f - 0.5f;
+//                        RectF rect = new RectF(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f);
+                        canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
+                        canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
+                        canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mBorderPaint);
                     } else {
-                        RectF rect = new RectF(0, 0, getWidth(), getHeight());
-                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
-                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
+                        drawRectangleRect.left = 0;
+                        drawRectangleRect.top = 0;
+                        drawRectangleRect.right = getWidth();
+                        drawRectangleRect.bottom = getHeight();
+//                        RectF rect = new RectF(0, 0, getWidth(), getHeight());
+                        canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
+                        canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
                     }
                     break;
                 default:
@@ -244,76 +246,60 @@ public class YiXiaWaveLoadingView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
-        System.out.println(w + " " + h + " " + oldw + " " + oldh);
-
         // If shapType is rectangle
         if (getShapeType() == ShapeType.RECTANGLE.ordinal()) {
             mCanvasWidth = w;
             mCanvasHeight = h;
         } else {
             mCanvasSize = w;
-            if (h < mCanvasSize)
+            if (h > mCanvasSize)
                 mCanvasSize = h;
         }
         updateWaveShader();
     }
 
     private void updateWaveShader() {
-
-        System.out.println("updateWaveShader");
-
         // IllegalArgumentException: width and height must be > 0 while loading Bitmap from View
         // http://stackoverflow.com/questions/17605662/illegalargumentexception-width-and-height-must-be-0-while-loading-bitmap-from
-        if (bitmapBuffer == null || haveBoundsChanged()) {
-            if (bitmapBuffer != null)
-                bitmapBuffer.recycle();
-            int width = getMeasuredWidth();
-            int height = getMeasuredHeight();
-            if (width > 0 && height > 0) {
-                double defaultAngularFrequency = 2.0f * Math.PI / DEFAULT_WAVE_LENGTH_RATIO / width;
-                float defaultAmplitude = height * DEFAULT_AMPLITUDE_RATIO;
-                mDefaultWaterLevel = height * DEFAULT_WATER_LEVEL_RATIO;
-                float defaultWaveLength = width;
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+        if (width > 0 && height > 0) {
+            double defaultAngularFrequency = 2.0f * Math.PI / DEFAULT_WAVE_LENGTH_RATIO / width;
+            float defaultAmplitude = height * DEFAULT_AMPLITUDE_RATIO;
+            mDefaultWaterLevel = height * DEFAULT_WATER_LEVEL_RATIO;
 
-                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
 
-                Paint wavePaint = new Paint();
-                wavePaint.setStrokeWidth(2);
-                wavePaint.setAntiAlias(true);
+            Paint wavePaint = new Paint();
+            wavePaint.setStrokeWidth(2);
+            wavePaint.setAntiAlias(true);
 
-                // Draw default waves into the bitmap.
-                // y=Asin(ωx+φ)+h
-                final int endX = width + 1;
-                final int endY = height + 1;
+            // Draw default waves into the bitmap.
+            // y=Asin(ωx+φ)+h
+            final int endX = width + 1;
+            final int endY = height + 1;
 
-                float[] waveY = new float[endX];
+            float[] waveY = new float[endX];
 
-                wavePaint.setColor(adjustAlpha(mWaveColor, 0.3f));
-                for (int beginX = 0; beginX < endX; beginX++) {
-                    double wx = beginX * defaultAngularFrequency;
-                    float beginY = (float) (mDefaultWaterLevel + defaultAmplitude * Math.sin(wx));
-                    canvas.drawLine(beginX, beginY, beginX, endY, wavePaint);
-                    waveY[beginX] = beginY;
-                }
-
-                wavePaint.setColor(mWaveColor);
-                final int wave2Shift = (int) (defaultWaveLength / 4);
-                for (int beginX = 0; beginX < endX; beginX++) {
-                    canvas.drawLine(beginX, waveY[(beginX + wave2Shift) % endX], beginX, endY, wavePaint);
-                }
-
-                // Use the bitamp to create the shader.
-                mWaveShader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.CLAMP);
-                this.mWavePaint.setShader(mWaveShader);
+            wavePaint.setColor(adjustAlpha(mWaveColor, 0.3f));
+            for (int beginX = 0; beginX < endX; beginX++) {
+                double wx = beginX * defaultAngularFrequency;
+                float beginY = (float) (mDefaultWaterLevel + defaultAmplitude * Math.sin(wx));
+                canvas.drawLine(beginX, beginY, beginX, endY, wavePaint);
+                waveY[beginX] = beginY;
             }
-        }
-    }
 
-    private boolean haveBoundsChanged() {
-        return getMeasuredWidth() != bitmapBuffer.getWidth() ||
-                getMeasuredHeight() != bitmapBuffer.getHeight();
+            wavePaint.setColor(mWaveColor);
+            final int wave2Shift = width / 4;
+            for (int beginX = 0; beginX < endX; beginX++) {
+                canvas.drawLine(beginX, waveY[(beginX + wave2Shift) % endX], beginX, endY, wavePaint);
+            }
+
+            // Use the bitamp to create the shader.
+            mWaveShader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.CLAMP);
+            mWavePaint.setShader(mWaveShader);
+        }
     }
 
     @Override
@@ -325,7 +311,7 @@ public class YiXiaWaveLoadingView extends View {
             System.out.println("onMeasure width : " + width + " height : " + height);
             setMeasuredDimension(width, height);
         } else {
-            int imageSize = (width < height) ? width : height;
+            int imageSize = (width > height) ? width : height;
             System.out.println("onMeasure imageSize : " + imageSize);
             setMeasuredDimension(imageSize, imageSize);
         }
@@ -376,10 +362,6 @@ public class YiXiaWaveLoadingView extends View {
         invalidate();
     }
 
-    public int getWaveBgColor() {
-        return mWaveBgColor;
-    }
-
     public void setWaveColor(int color) {
         mWaveColor = color;
         // Need to recreate shader when color changed ?
@@ -388,17 +370,9 @@ public class YiXiaWaveLoadingView extends View {
         invalidate();
     }
 
-    public int getWaveColor() {
-        return mWaveColor;
-    }
-
     public void setBorderWidth(float width) {
         mBorderPaint.setStrokeWidth(width);
         invalidate();
-    }
-
-    public float getBorderWidth() {
-        return mBorderPaint.getStrokeWidth();
     }
 
     public void setBorderColor(int color) {
@@ -407,12 +381,7 @@ public class YiXiaWaveLoadingView extends View {
         invalidate();
     }
 
-    public int getBorderColor() {
-        return mBorderPaint.getColor();
-    }
-
     public void setShapeType(ShapeType shapeType) {
-        //TODO reset width height
         mShapeType = shapeType.ordinal();
         requestLayout();
         invalidate();
@@ -434,10 +403,6 @@ public class YiXiaWaveLoadingView extends View {
         }
     }
 
-    public float getAmplitudeRatio() {
-        return mAmplitudeRatio;
-    }
-
     /**
      * Water level increases from 0 to the value of WaveView.
      *
@@ -453,10 +418,6 @@ public class YiXiaWaveLoadingView extends View {
         animatorSetProgress.start();
     }
 
-    public int getProgressValue() {
-        return mProgressValue;
-    }
-
     public void setWaveShiftRatio(float waveShiftRatio) {
         if (this.mWaveShiftRatio != waveShiftRatio) {
             this.mWaveShiftRatio = waveShiftRatio;
@@ -464,19 +425,11 @@ public class YiXiaWaveLoadingView extends View {
         }
     }
 
-    public float getWaveShiftRatio() {
-        return mWaveShiftRatio;
-    }
-
     public void setWaterLevelRatio(float waterLevelRatio) {
         if (this.mWaterLevelRatio != waterLevelRatio) {
             this.mWaterLevelRatio = waterLevelRatio;
             invalidate();
         }
-    }
-
-    public float getWaterLevelRatio() {
-        return mWaterLevelRatio;
     }
 
     public void startAnimation() {
