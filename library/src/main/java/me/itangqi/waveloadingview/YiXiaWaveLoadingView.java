@@ -12,8 +12,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.os.Build;
@@ -51,21 +49,12 @@ public class YiXiaWaveLoadingView extends View {
     private static final float DEFAULT_BORDER_WIDTH = 0;
     // This is incorrect/not recommended by Joshua Bloch in his book Effective Java (2nd ed).
     private static final int DEFAULT_WAVE_SHAPE = ShapeType.CIRCLE.ordinal();
-    private static final int DEFAULT_TRIANGLE_DIRECTION = TriangleDirection.NORTH.ordinal();
     private static final int DEFAULT_ROUND_RECTANGLE_X_AND_Y = 30;
 
     public enum ShapeType {
-        TRIANGLE,
         CIRCLE,
         SQUARE,
         RECTANGLE
-    }
-
-    public enum TriangleDirection {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST
     }
 
     // Dynamic Properties.
@@ -76,7 +65,6 @@ public class YiXiaWaveLoadingView extends View {
     private int mWaveBgColor;
     private int mWaveColor;
     private int mShapeType;
-    private int mTriangleDirection;
     private int mRoundRectangleXY;
 
     // Properties.
@@ -84,7 +72,6 @@ public class YiXiaWaveLoadingView extends View {
     private float mWaterLevelRatio = 1f;
     private float mWaveShiftRatio = DEFAULT_WAVE_SHIFT_RATIO;
     private int mProgressValue = DEFAULT_WAVE_PROGRESS_VALUE;
-    private boolean mIsRoundRectangle;
 
     // Object used to draw.
     // Shader containing repeated waves.
@@ -133,38 +120,34 @@ public class YiXiaWaveLoadingView extends View {
         initAnimation();
 
         // Load the styled attributes and set their properties
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.WaveLoadingView, defStyleAttr, 0);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.YiXiaWaveLoadingView, defStyleAttr, 0);
 
         // Init ShapeType
-        mShapeType = attributes.getInteger(R.styleable.WaveLoadingView_wlv_shapeType, DEFAULT_WAVE_SHAPE);
+        mShapeType = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_shapeType, DEFAULT_WAVE_SHAPE);
 
         // Init Wave
-        mWaveColor = attributes.getColor(R.styleable.WaveLoadingView_wlv_waveColor, DEFAULT_WAVE_COLOR);
-        mWaveBgColor = attributes.getColor(R.styleable.WaveLoadingView_wlv_wave_background_Color, DEFAULT_WAVE_BACKGROUND_COLOR);
+        mWaveColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_waveColor, DEFAULT_WAVE_COLOR);
+        mWaveBgColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_wave_background_Color, DEFAULT_WAVE_BACKGROUND_COLOR);
 
         mWaveBgPaint.setColor(mWaveBgColor);
 
         // Init AmplitudeRatio
-        float amplitudeRatioAttr = attributes.getFloat(R.styleable.WaveLoadingView_wlv_waveAmplitude, DEFAULT_AMPLITUDE_VALUE) / 1000;
+        float amplitudeRatioAttr = attributes.getFloat(R.styleable.YiXiaWaveLoadingView_waveAmplitude, DEFAULT_AMPLITUDE_VALUE) / 1000;
         mAmplitudeRatio = (amplitudeRatioAttr > DEFAULT_AMPLITUDE_RATIO) ? DEFAULT_AMPLITUDE_RATIO : amplitudeRatioAttr;
 
         // Init Progress
-        mProgressValue = attributes.getInteger(R.styleable.WaveLoadingView_wlv_progressValue, DEFAULT_WAVE_PROGRESS_VALUE);
+        mProgressValue = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_progressValue, DEFAULT_WAVE_PROGRESS_VALUE);
         setProgressValue(mProgressValue);
 
         // Init RoundRectangle
-        mIsRoundRectangle = attributes.getBoolean(R.styleable.WaveLoadingView_wlv_round_rectangle, false);
-        mRoundRectangleXY = attributes.getInteger(R.styleable.WaveLoadingView_wlv_round_rectangle_x_and_y, DEFAULT_ROUND_RECTANGLE_X_AND_Y);
-
-        // Init Triangle direction
-        mTriangleDirection = attributes.getInteger(R.styleable.WaveLoadingView_wlv_triangle_direction, DEFAULT_TRIANGLE_DIRECTION);
+        mRoundRectangleXY = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_round_rectangle_x_and_y, DEFAULT_ROUND_RECTANGLE_X_AND_Y);
 
         // Init Border
         mBorderPaint = new Paint();
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setStyle(Paint.Style.STROKE);
-        mBorderPaint.setStrokeWidth(attributes.getDimension(R.styleable.WaveLoadingView_wlv_borderWidth, dp2px(DEFAULT_BORDER_WIDTH)));
-        mBorderPaint.setColor(attributes.getColor(R.styleable.WaveLoadingView_wlv_borderColor, DEFAULT_WAVE_COLOR));
+        mBorderPaint.setStrokeWidth(attributes.getDimension(R.styleable.YiXiaWaveLoadingView_borderWidth, dp2px(DEFAULT_BORDER_WIDTH)));
+        mBorderPaint.setColor(attributes.getColor(R.styleable.YiXiaWaveLoadingView_borderColor, DEFAULT_WAVE_COLOR));
 
         attributes.recycle();
     }
@@ -175,6 +158,7 @@ public class YiXiaWaveLoadingView extends View {
         if (canvas.getHeight() < mCanvasSize) {
             mCanvasSize = canvas.getHeight();
         }
+
         // Draw Wave.
         // Modify paint shader according to mShowWave state.
         if (mWaveShader != null) {
@@ -197,18 +181,9 @@ public class YiXiaWaveLoadingView extends View {
             // Get borderWidth.
             float borderWidth = mBorderPaint.getStrokeWidth();
 
-            // The default type is triangle.
             switch (mShapeType) {
-                // Draw triangle
-                case 0:
-                    // Currently does not support the border settings
-                    Point start = new Point(0, getHeight());
-                    Path triangle = getEquilateralTriangle(start, getWidth(), getHeight(), mTriangleDirection);
-                    canvas.drawPath(triangle, mWaveBgPaint);
-                    canvas.drawPath(triangle, mWavePaint);
-                    break;
                 // Draw circle
-                case 1:
+                case 0:
                     if (borderWidth > 0) {
                         canvas.drawCircle(getWidth() / 2f, getHeight() / 2f,
                                 (getWidth() - borderWidth) / 2f - 1f, mBorderPaint);
@@ -220,7 +195,7 @@ public class YiXiaWaveLoadingView extends View {
                     canvas.drawCircle(getWidth() / 2f, getHeight() / 2f, radius, mWavePaint);
                     break;
                 // Draw square
-                case 2:
+                case 1:
                     if (borderWidth > 0) {
                         canvas.drawRect(
                                 borderWidth / 2f,
@@ -236,31 +211,31 @@ public class YiXiaWaveLoadingView extends View {
                             getHeight() - borderWidth, mWavePaint);
                     break;
                 // Draw rectangle
-                case 3:
-                    if (mIsRoundRectangle) {
-                        if (borderWidth > 0) {
-                            RectF rect = new RectF(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f);
-                            canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
-                            canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
+                case 2:
+                    if (borderWidth > 0) {
+                        RectF rect = new RectF(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f);
+                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
+                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            canvas.drawRoundRect(
+                                    borderWidth / 2f,
+                                    borderWidth / 2f,
+                                    getWidth() - borderWidth / 2f - 0.5f,
+                                    getHeight() - borderWidth / 2f - 0.5f,
+                                    mRoundRectangleXY, mRoundRectangleXY,
+                                    mBorderPaint);
                         } else {
-                            RectF rect = new RectF(0, 0, getWidth(), getHeight());
-                            canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
-                            canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
+                            canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mBorderPaint);
                         }
                     } else {
-                        if (borderWidth > 0) {
-                            canvas.drawRect(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f, mWaveBgPaint);
-                            canvas.drawRect(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f, mWavePaint);
-                        } else {
-                            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mWaveBgPaint);
-                            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mWavePaint);
-                        }
+                        RectF rect = new RectF(0, 0, getWidth(), getHeight());
+                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
+                        canvas.drawRoundRect(rect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
                     }
                     break;
                 default:
                     break;
             }
-
         } else {
             mWavePaint.setShader(null);
         }
@@ -269,8 +244,11 @@ public class YiXiaWaveLoadingView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
+        System.out.println(w + " " + h + " " + oldw + " " + oldh);
+
         // If shapType is rectangle
-        if (getShapeType() == 3) {
+        if (getShapeType() == ShapeType.RECTANGLE.ordinal()) {
             mCanvasWidth = w;
             mCanvasHeight = h;
         } else {
@@ -282,6 +260,9 @@ public class YiXiaWaveLoadingView extends View {
     }
 
     private void updateWaveShader() {
+
+        System.out.println("updateWaveShader");
+
         // IllegalArgumentException: width and height must be > 0 while loading Bitmap from View
         // http://stackoverflow.com/questions/17605662/illegalargumentexception-width-and-height-must-be-0-while-loading-bitmap-from
         if (bitmapBuffer == null || haveBoundsChanged()) {
@@ -340,10 +321,12 @@ public class YiXiaWaveLoadingView extends View {
         int width = measureWidth(widthMeasureSpec);
         int height = measureHeight(heightMeasureSpec);
         // If shapType is rectangle
-        if (getShapeType() == 3) {
+        if (getShapeType() == ShapeType.RECTANGLE.ordinal()) {
+            System.out.println("onMeasure width : " + width + " height : " + height);
             setMeasuredDimension(width, height);
         } else {
             int imageSize = (width < height) ? width : height;
+            System.out.println("onMeasure imageSize : " + imageSize);
             setMeasuredDimension(imageSize, imageSize);
         }
 
@@ -429,6 +412,7 @@ public class YiXiaWaveLoadingView extends View {
     }
 
     public void setShapeType(ShapeType shapeType) {
+        //TODO reset width height
         mShapeType = shapeType.ordinal();
         invalidate();
     }
@@ -595,47 +579,4 @@ public class YiXiaWaveLoadingView extends View {
         return (int) (dp * scale + 0.5f);
     }
 
-    /**
-     * Draw EquilateralTriangle
-     *
-     * @param p1        Start point
-     * @param width     The width of triangle
-     * @param height    The height of triangle
-     * @param direction The direction of triangle
-     * @return Path
-     */
-    private Path getEquilateralTriangle(Point p1, int width, int height, int direction) {
-        Point p2 = null, p3 = null;
-        // NORTH
-        if (direction == 0) {
-            p2 = new Point(p1.x + width, p1.y);
-            p3 = new Point(p1.x + (width / 2), (int) (height - Math.sqrt(3.0) / 2 * height));
-        }
-        // SOUTH
-        else if (direction == 1) {
-            p2 = new Point(p1.x, p1.y - height);
-            p3 = new Point(p1.x + width, p1.y - height);
-            p1.x = p1.x + (width / 2);
-            p1.y = (int) (Math.sqrt(3.0) / 2 * height);
-        }
-        // EAST
-        else if (direction == 2) {
-            p2 = new Point(p1.x, p1.y - height);
-            p3 = new Point((int) (Math.sqrt(3.0) / 2 * width), p1.y / 2);
-        }
-        // WEST
-        else if (direction == 3) {
-            p2 = new Point(p1.x + width, p1.y - height);
-            p3 = new Point(p1.x + width, p1.y);
-            p1.x = (int) (width - Math.sqrt(3.0) / 2 * width);
-            p1.y = p1.y / 2;
-        }
-
-        Path path = new Path();
-        path.moveTo(p1.x, p1.y);
-        path.lineTo(p2.x, p2.y);
-        path.lineTo(p3.x, p3.y);
-
-        return path;
-    }
 }

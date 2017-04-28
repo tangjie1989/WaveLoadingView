@@ -34,7 +34,7 @@ public class YiXiaActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 new AlertDialog.Builder(YiXiaActivity.this).setTitle("Shape Type").setSingleChoiceItems(
-                        new String[] { "CIRCLE", "TRIANGLE", "SQUARE", "RECTANGLE" }, checkedItem,
+                        new String[] { "CIRCLE", "SQUARE", "RECTANGLE" }, checkedItem,
               new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         checkedItem = which;
@@ -44,14 +44,10 @@ public class YiXiaActivity extends AppCompatActivity {
                                 dialog.dismiss();
                                 break;
                             case 1:
-                                mWaveLoadingView.setShapeType(YiXiaWaveLoadingView.ShapeType.TRIANGLE);
-                                dialog.dismiss();
-                                break;
-                            case 2:
                                 mWaveLoadingView.setShapeType(YiXiaWaveLoadingView.ShapeType.SQUARE);
                                 dialog.dismiss();
                                 break;
-                            case 3:
+                            case 2:
                                 mWaveLoadingView.setShapeType(YiXiaWaveLoadingView.ShapeType.RECTANGLE);
                                 dialog.dismiss();
                                 break;

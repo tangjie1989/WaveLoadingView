@@ -5,28 +5,33 @@
               android:gravity="center"
               android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
         <me.itangqi.waveloadingview.YiXiaWaveLoadingView
             android:id="@+id/waveLoadingView"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            app:borderColor="@color/colorPrimaryDark"
+            app:borderWidth="3dp"
+            app:progressValue="40"
+            app:shapeType="rectangle"
+            app:waveAmplitude="70"
+            app:waveColor="@color/colorAccent"/>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:wlv_borderColor="@color/colorAccent"
-            app:wlv_borderWidth="3dp"
-            app:wlv_progressValue="40"
-            app:wlv_round_rectangle="true"
-            app:wlv_shapeType="circle"
-            app:wlv_triangle_direction="north"
-            app:wlv_waveAmplitude="70"
-            app:wlv_waveColor="@color/colorAccent"/>
+            android:layout_gravity="center"
+            android:text="已完成1/4"
+            android:textColor="@color/dsb_progress_color"
+            android:textSize="12sp"/>
 
-    </LinearLayout>
+    </FrameLayout>
 
     <ScrollView
         android:layout_width="match_parent"
