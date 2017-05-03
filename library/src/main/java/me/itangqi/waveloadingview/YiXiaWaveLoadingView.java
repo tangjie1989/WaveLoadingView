@@ -221,7 +221,6 @@ public class YiXiaWaveLoadingView extends View {
                         drawRectangleRect.top = borderWidth / 2f;
                         drawRectangleRect.right = getWidth() - borderWidth / 2f - 0.5f;
                         drawRectangleRect.bottom = getHeight() - borderWidth / 2f - 0.5f;
-//                        RectF rect = new RectF(borderWidth / 2f, borderWidth / 2f, getWidth() - borderWidth / 2f - 0.5f, getHeight() - borderWidth / 2f - 0.5f);
                         canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
                         canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
                         canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mBorderPaint);
@@ -230,7 +229,6 @@ public class YiXiaWaveLoadingView extends View {
                         drawRectangleRect.top = 0;
                         drawRectangleRect.right = getWidth();
                         drawRectangleRect.bottom = getHeight();
-//                        RectF rect = new RectF(0, 0, getWidth(), getHeight());
                         canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWaveBgPaint);
                         canvas.drawRoundRect(drawRectangleRect, mRoundRectangleXY, mRoundRectangleXY, mWavePaint);
                     }
