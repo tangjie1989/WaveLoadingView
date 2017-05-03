@@ -5,9 +5,9 @@
         <attr name="borderWidth" format="dimension"/>
         <attr name="borderColor" format="color"/>
         <attr name="progressValue" format="integer"/>
-        <attr name="round_rectangle_x_and_y" format="integer"/>
+        <attr name="roundRectangleXandY" format="integer"/>
         <attr name="waveColor" format="color"/>
-        <attr name="wave_background_Color" format="color"/>
+        <attr name="waveBackgroundColor" format="color"/>
         <attr name="waveAmplitude" format="float"/>
         <attr name="shapeType" format="enum">
             <enum name="circle" value="0"/>

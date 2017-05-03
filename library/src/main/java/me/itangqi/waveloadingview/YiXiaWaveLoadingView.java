@@ -131,7 +131,7 @@ public class YiXiaWaveLoadingView extends View {
 
         // Init Wave
         mWaveColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_waveColor, DEFAULT_WAVE_COLOR);
-        mWaveBgColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_wave_background_Color, DEFAULT_WAVE_BACKGROUND_COLOR);
+        mWaveBgColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_waveBackgroundColor, DEFAULT_WAVE_BACKGROUND_COLOR);
 
         mWaveBgPaint.setColor(mWaveBgColor);
 
@@ -144,7 +144,7 @@ public class YiXiaWaveLoadingView extends View {
         setProgressValue(mProgressValue);
 
         // Init RoundRectangle
-        mRoundRectangleXY = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_round_rectangle_x_and_y, DEFAULT_ROUND_RECTANGLE_X_AND_Y);
+        mRoundRectangleXY = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_roundRectangleXandY, DEFAULT_ROUND_RECTANGLE_X_AND_Y);
 
         // Init Border
         mBorderPaint = new Paint();
@@ -280,7 +280,8 @@ public class YiXiaWaveLoadingView extends View {
 
             float[] waveY = new float[endX];
 
-            wavePaint.setColor(adjustAlpha(mWaveColor, 0.3f));
+//            wavePaint.setColor(adjustAlpha(mWaveColor, 0.3f));
+            wavePaint.setColor(mWaveColor);
             for (int beginX = 0; beginX < endX; beginX++) {
                 double wx = beginX * defaultAngularFrequency;
                 float beginY = (float) (mDefaultWaterLevel + defaultAmplitude * Math.sin(wx));
@@ -288,10 +289,15 @@ public class YiXiaWaveLoadingView extends View {
                 waveY[beginX] = beginY;
             }
 
-            wavePaint.setColor(mWaveColor);
+//            wavePaint.setColor(mWaveColor);
             final int wave2Shift = width / 4;
             for (int beginX = 0; beginX < endX; beginX++) {
                 canvas.drawLine(beginX, waveY[(beginX + wave2Shift) % endX], beginX, endY, wavePaint);
+            }
+
+            final int wave3Shift = width / 2;
+            for (int beginX = 0; beginX < endX; beginX++) {
+                canvas.drawLine(beginX, waveY[(beginX + wave3Shift) % endX], beginX, endY, wavePaint);
             }
 
             // Use the bitamp to create the shader.

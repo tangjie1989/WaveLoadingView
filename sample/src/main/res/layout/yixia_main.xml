@@ -13,22 +13,23 @@
 
         <me.itangqi.waveloadingview.YiXiaWaveLoadingView
             android:id="@+id/waveLoadingView"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
-            app:borderColor="@color/colorPrimaryDark"
-            app:borderWidth="3dp"
+            app:borderColor="#785B54"
+            app:borderWidth="1.5dp"
             app:progressValue="40"
             app:shapeType="rectangle"
-            app:waveAmplitude="70"
-            app:waveColor="@color/colorAccent"/>
+            app:waveAmplitude="100"
+            app:waveBackgroundColor="#FCDD71"
+            app:waveColor="#33ffffff"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="已完成1/4"
-            android:textColor="@color/dsb_progress_color"
+            android:textColor="#785B54"
             android:textSize="12sp"/>
 
     </FrameLayout>
