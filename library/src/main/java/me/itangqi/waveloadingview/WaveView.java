@@ -23,7 +23,7 @@ import android.view.animation.LinearInterpolator;
 
 import me.itangqi.library.R;
 
-public class YiXiaWaveLoadingView extends View {
+public class WaveView extends View {
     /**
      * +------------------------+
      * | wave length - 波长      |__________
@@ -97,15 +97,15 @@ public class YiXiaWaveLoadingView extends View {
     private RectF drawRectangleRect = new RectF();
 
     // Constructor & Init Method.
-    public YiXiaWaveLoadingView(final Context context) {
+    public WaveView(final Context context) {
         this(context, null);
     }
 
-    public YiXiaWaveLoadingView(Context context, AttributeSet attrs) {
+    public WaveView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public YiXiaWaveLoadingView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WaveView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
@@ -124,34 +124,34 @@ public class YiXiaWaveLoadingView extends View {
         initAnimation();
 
         // Load the styled attributes and set their properties
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.YiXiaWaveLoadingView, defStyleAttr, 0);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.WaveView, defStyleAttr, 0);
 
         // Init ShapeType
-        mShapeType = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_shapeType, DEFAULT_WAVE_SHAPE);
+        mShapeType = attributes.getInteger(R.styleable.WaveView_shapeType, DEFAULT_WAVE_SHAPE);
 
         // Init Wave
-        mWaveColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_waveColor, DEFAULT_WAVE_COLOR);
-        mWaveBgColor = attributes.getColor(R.styleable.YiXiaWaveLoadingView_waveBackgroundColor, DEFAULT_WAVE_BACKGROUND_COLOR);
+        mWaveColor = attributes.getColor(R.styleable.WaveView_waveColor, DEFAULT_WAVE_COLOR);
+        mWaveBgColor = attributes.getColor(R.styleable.WaveView_waveBackgroundColor, DEFAULT_WAVE_BACKGROUND_COLOR);
 
         mWaveBgPaint.setColor(mWaveBgColor);
 
         // Init AmplitudeRatio
-        float amplitudeRatioAttr = attributes.getFloat(R.styleable.YiXiaWaveLoadingView_waveAmplitude, DEFAULT_AMPLITUDE_VALUE) / 1000;
+        float amplitudeRatioAttr = attributes.getFloat(R.styleable.WaveView_waveAmplitude, DEFAULT_AMPLITUDE_VALUE) / 1000;
         mAmplitudeRatio = (amplitudeRatioAttr > DEFAULT_AMPLITUDE_RATIO) ? DEFAULT_AMPLITUDE_RATIO : amplitudeRatioAttr;
 
         // Init Progress
-        mProgressValue = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_progressValue, DEFAULT_WAVE_PROGRESS_VALUE);
+        mProgressValue = attributes.getInteger(R.styleable.WaveView_progressValue, DEFAULT_WAVE_PROGRESS_VALUE);
         setProgressValue(mProgressValue);
 
         // Init RoundRectangle
-        mRoundRectangleXY = attributes.getInteger(R.styleable.YiXiaWaveLoadingView_roundRectangleXandY, DEFAULT_ROUND_RECTANGLE_X_AND_Y);
+        mRoundRectangleXY = attributes.getInteger(R.styleable.WaveView_roundRectangleXandY, DEFAULT_ROUND_RECTANGLE_X_AND_Y);
 
         // Init Border
         mBorderPaint = new Paint();
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setStyle(Paint.Style.STROKE);
-        mBorderPaint.setStrokeWidth(attributes.getDimension(R.styleable.YiXiaWaveLoadingView_borderWidth, dp2px(DEFAULT_BORDER_WIDTH)));
-        mBorderPaint.setColor(attributes.getColor(R.styleable.YiXiaWaveLoadingView_borderColor, DEFAULT_WAVE_COLOR));
+        mBorderPaint.setStrokeWidth(attributes.getDimension(R.styleable.WaveView_borderWidth, dp2px(DEFAULT_BORDER_WIDTH)));
+        mBorderPaint.setColor(attributes.getColor(R.styleable.WaveView_borderColor, DEFAULT_WAVE_COLOR));
 
         attributes.recycle();
     }

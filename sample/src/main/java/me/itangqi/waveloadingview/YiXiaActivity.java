@@ -16,7 +16,7 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 public class YiXiaActivity extends AppCompatActivity {
 
-    private YiXiaWaveLoadingView mWaveLoadingView;
+    private WaveView mWaveLoadingView;
     private int checkedItem = 0;
 
     @Override
@@ -24,7 +24,7 @@ public class YiXiaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.yixia_main);
 
-        mWaveLoadingView = (YiXiaWaveLoadingView) findViewById(R.id.waveLoadingView);
+        mWaveLoadingView = (WaveView) findViewById(R.id.waveLoadingView);
         // Sets the length of the animation, default is 1000.
         mWaveLoadingView.setAnimDuration(3000);
 
@@ -40,15 +40,15 @@ public class YiXiaActivity extends AppCompatActivity {
                         checkedItem = which;
                         switch (which) {
                             case 0:
-                                mWaveLoadingView.setShapeType(YiXiaWaveLoadingView.ShapeType.CIRCLE);
+                                mWaveLoadingView.setShapeType(WaveView.ShapeType.CIRCLE);
                                 dialog.dismiss();
                                 break;
                             case 1:
-                                mWaveLoadingView.setShapeType(YiXiaWaveLoadingView.ShapeType.SQUARE);
+                                mWaveLoadingView.setShapeType(WaveView.ShapeType.SQUARE);
                                 dialog.dismiss();
                                 break;
                             case 2:
-                                mWaveLoadingView.setShapeType(YiXiaWaveLoadingView.ShapeType.RECTANGLE);
+                                mWaveLoadingView.setShapeType(WaveView.ShapeType.RECTANGLE);
                                 dialog.dismiss();
                                 break;
                             default:

@@ -11,7 +11,7 @@
         android:layout_marginTop="20dp"
         android:layout_weight="1">
 
-        <me.itangqi.waveloadingview.YiXiaWaveLoadingView
+        <me.itangqi.waveloadingview.WaveView
             android:id="@+id/waveLoadingView"
             android:layout_width="80dp"
             android:layout_height="30dp"
